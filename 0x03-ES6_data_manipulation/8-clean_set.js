@@ -15,7 +15,7 @@ export default function cleanSet(set, startString) {
       const valSubStr = val.substring(startString.length);
 
       if (valSubStr && valSubStr !== val) {
-        all_str.push(valueSubStr);
+        all_str.push(valSubStr);
       }
     }
   }
