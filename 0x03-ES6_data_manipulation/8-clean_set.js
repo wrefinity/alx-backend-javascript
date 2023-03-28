@@ -1,4 +1,4 @@
-export default const cleanSet = (set, startString) => {
+const cleanSet = (set, startString) => {
   if (startString === undefined || startString.length === 0) {
     return '';
   }
@@ -7,3 +7,5 @@ export default const cleanSet = (set, startString) => {
     .map((p) => (p !== undefined ? p.slice(startString.length) : ''))
     .join('-');
 };
+
+export default cleanSet;
