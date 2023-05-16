@@ -8,7 +8,7 @@ const DB_FILE = process.argv.length > 2 ? process.argv[2] : '';
 /**
  * Counts students in a CSV data file.
  * @param {String} dataPath path to the CSV data file.
- * @author Wreford Andrew <https://github.com/wrefinity>
+ * @author Andrew Wreford <https://github.com/wrefinity>
  */
 const countStudents = (dataPath) => new Promise((resolve, reject) => {
   if (!dataPath) {
@@ -20,13 +20,13 @@ const countStudents = (dataPath) => new Promise((resolve, reject) => {
         reject(new Error('Cannot load the database'));
       }
       if (data) {
-        const recorded = [];
+        const reports = [];
         const csvFile = data.toString('utf-8').trim().split('\n');
         const stdGroups = {};
-        const csvFields = csvFile[0].split(',');
-        const stdNames = csvFields.slice(
+        const csv_field = csvFile[0].split(',');
+        const stdPropsNames = csv_field.slice(
           0,
-          csvFields.length - 1,
+          csv_field.length - 1,
         );
 
         for (const line of csvFile.slice(1)) {
@@ -39,7 +39,7 @@ const countStudents = (dataPath) => new Promise((resolve, reject) => {
           if (!Object.keys(stdGroups).includes(field)) {
             stdGroups[field] = [];
           }
-          const stdEntries = stdNames.map((propName, idx) => [
+          const stdEntries = stdPropsNames.map((propName, idx) => [
             propName,
             stdVals[idx],
           ]);
@@ -49,15 +49,15 @@ const countStudents = (dataPath) => new Promise((resolve, reject) => {
         const allStds = Object.values(stdGroups).reduce(
           (pre, cur) => (pre || []).length + cur.length,
         );
-        recorded.push(`Number of students: ${allStds}`);
+        reports.push(`Number of students: ${allStds}`);
         for (const [field, group] of Object.entries(stdGroups)) {
-          recorded.push([
+          reports.push([
             `Number of students in ${field}: ${group.length}.`,
             'List:',
-            group.map((std) => std.firstname).join(', '),
+            group.map((student) => student.firstname).join(', '),
           ].join(' '));
         }
-        resolve(recorded.join('\n'));
+        resolve(reports.join('\n'));
       }
     });
   }
@@ -68,24 +68,24 @@ app.get('/', (_, res) => {
 });
 
 app.get('/students', (_, res) => {
-  const recorder = ['This is the list of our students'];
+  const feedbacks = ['This is the list of our students'];
 
   countStudents(DB_FILE)
     .then((report) => {
-      recorder.push(report);
-      const responseText = recorder.join('\n');
+      feedbacks.push(report);
+      const restxt = feedbacks.join('\n');
       res.setHeader('Content-Type', 'text/plain');
-      res.setHeader('Content-Length', responseText.length);
+      res.setHeader('Content-Length', restxt.length);
       res.statusCode = 200;
-      res.write(Buffer.from(responseText));
+      res.write(Buffer.from(restxt));
     })
     .catch((err) => {
-      recorder.push(err instanceof Error ? err.message : err.toString());
-      const responseText = recorder.join('\n');
+      feedbacks.push(err instanceof Error ? err.message : err.toString());
+      const restxt = feedbacks.join('\n');
       res.setHeader('Content-Type', 'text/plain');
-      res.setHeader('Content-Length', responseText.length);
+      res.setHeader('Content-Length', restxt.length);
       res.statusCode = 200;
-      res.write(Buffer.from(responseText));
+      res.write(Buffer.from(restxt));
     });
 });
 
@@ -94,4 +94,3 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
-
